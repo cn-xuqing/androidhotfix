@@ -7,6 +7,9 @@ public class ConfigManager {
     public static String getUpgradeVersion(){
         return null;
     }
+    public static String getHotfixEndName(){
+        return ".dex";
+    }
     public static String getHotfixPackageName(){
         return null;
     }
