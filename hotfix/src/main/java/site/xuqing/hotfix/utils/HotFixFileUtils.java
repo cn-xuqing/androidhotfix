@@ -10,18 +10,29 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class HotFixFileUtils {
-    public static final String HOTFIX_BASE_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"SystemHotFix/";
-    public static final String HOTFIX_FIX_PATH=HOTFIX_BASE_PATH+"hotfix/";
-    public static final String HOTFIX_APK_PATH=HOTFIX_BASE_PATH+"apk/";
-    static{
+    private static final String HOTFIX_BASE_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"SystemHotFix/";
+    private static final String HOTFIX_FIX_PATH=HOTFIX_BASE_PATH+"hotfix/";
+    private static final String HOTFIX_APK_PATH=HOTFIX_BASE_PATH+"apk/";
+    public static String getHotfixBasePath(){
+        File apkPath=new File(HOTFIX_BASE_PATH);
+        if (!apkPath.exists()){
+            apkPath.mkdirs();
+        }
+        return HOTFIX_BASE_PATH;
+    }
+    public static String getHotfixFixPath(){
         File fixPath=new File(HOTFIX_FIX_PATH);
         if (!fixPath.exists()){
             fixPath.mkdirs();
         }
+        return HOTFIX_FIX_PATH;
+    }
+    public static String getHotfixApkPath(){
         File apkPath=new File(HOTFIX_APK_PATH);
         if (!apkPath.exists()){
             apkPath.mkdirs();
         }
+        return HOTFIX_APK_PATH;
     }
     public static void fixBug(Context context,String name) {
         // 对应目录 /data/data/packageName/mydex/classes2.dex

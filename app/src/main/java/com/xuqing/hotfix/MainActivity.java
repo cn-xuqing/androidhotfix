@@ -38,6 +38,6 @@ public class MainActivity extends Activity {
 
     @NeedsPermission({Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE})
     public void requestPermission() {
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 }
