@@ -28,7 +28,7 @@ public class HotFixDexUtils {
 
     //dex命名必须使用传入的服务器获取的特定名字为前缀，该前缀生成必须为：classes_upgrade版本号_hotfix版本号
     //整个名字为：classes_upgrade版本号_hotfix版本号.dex
-    public static void loadFixedDex(Context context, String dexFirstName) {
+    public static void loadFixedDex(Context context) {
         if (context == null) {
             return;
         }
@@ -37,7 +37,7 @@ public class HotFixDexUtils {
         //拿到这个文件夹目录中的所有文件
         File[] listFiles = fileDir.listFiles();
         for (File file : listFiles) {
-            if (file.getName().startsWith(dexFirstName) && file.getName().endsWith(".dex")) {
+            if (file.getName().startsWith(HotFixFileUtils.getHotfixFixFileName()) && file.getName().endsWith(".dex")) {
                 loadedDex.add(file);//存入集合
             }
         }

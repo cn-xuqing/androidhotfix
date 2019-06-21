@@ -1,6 +1,6 @@
 package com.xuqing.hotfix;
 
-import site.xuqing.hotfix.HotFixApplication;
+import site.xuqing.hotfix.app.HotFixApplication;
 
 public class MyApplication extends HotFixApplication {
 }
