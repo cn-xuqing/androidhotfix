@@ -32,6 +32,10 @@ public class ConfigManager {
         return configBeanCurrent.getUpgradeVersion();
     }
 
+    public String getUpgradeVersionCode(){
+        return configBeanCurrent.getUpgradeVersionCode();
+    }
+
     public String getHotfixEndName() {
         String hotfixUrl = configBeanCurrent.getHotfixUrl();
         if (hotfixUrl != null) {
@@ -161,18 +165,21 @@ public class ConfigManager {
                         configBeanOld.setHotfixVersion(jsonObjectHotfix.getString("version"));
                         configBeanOld.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
                         configBeanOld.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
+                        configBeanOld.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
                         configBeanOld.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
                         break;
                     case CURRENT:
                         configBeanCurrent.setHotfixVersion(jsonObjectHotfix.getString("version"));
                         configBeanCurrent.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
                         configBeanCurrent.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
+                        configBeanCurrent.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
                         configBeanCurrent.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
                         break;
                     case TEMP:
                         configBeanTemp.setHotfixVersion(jsonObjectHotfix.getString("version"));
                         configBeanTemp.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
                         configBeanTemp.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
+                        configBeanTemp.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
                         configBeanTemp.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
                         break;
                     default:

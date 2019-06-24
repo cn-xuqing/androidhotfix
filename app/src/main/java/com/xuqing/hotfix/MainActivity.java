@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import site.xuqing.hotfix.Hotfix;
+import site.xuqing.hotfix.listener.OnHotfixListener;
 import site.xuqing.hotfix.listener.OnUpgradeListener;
 
 public class MainActivity extends Activity {
@@ -47,7 +48,17 @@ public class MainActivity extends Activity {
             @Override
             public void onUpgrade(String apkPath) {
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>"+apkPath);
-                Toast.makeText(MainActivity.this,"更新："+apkPath,Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"APP更新："+apkPath,Toast.LENGTH_SHORT).show();
+                /**
+                 * 此处添加升级提醒和跳转用户升级界面
+                 * 由于7.0以上系统的文件打开需要在AndroidManifest.xml文件中配置Provider，故留给用户APP自行配置暴露
+                 */
+            }
+        });
+        Hotfix.getInstance().setOnHotfixListener(new OnHotfixListener() {
+            @Override
+            public void onHotfix(String hotfixPath) {
+                Toast.makeText(MainActivity.this,"热修复："+hotfixPath,Toast.LENGTH_SHORT).show();
             }
         });
     }

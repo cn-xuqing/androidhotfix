@@ -19,6 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="site.xuqing.hotfix.META_DATA_KEY"
+            android:value="填写你APP的sign值" />
     </application>
 
 </manifest>
