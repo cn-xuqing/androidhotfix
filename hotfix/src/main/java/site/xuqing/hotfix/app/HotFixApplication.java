@@ -1,9 +1,7 @@
 package site.xuqing.hotfix.app;
 
-import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -37,8 +35,10 @@ public class HotFixApplication extends Application {
         init(getApplicationContext(),versionCode,versionName,packageName,sign);
     }
 
-    //TODO 可以添加用户升级版本提醒以及用户自定义下载
-    //TODO 需要尝试把调整安装的逻辑放至api，以减少用户的自行设置流程
+    /**
+     * TODO 1.可以添加用户升级版本提醒以及用户自定义下载
+     * TODO 2.需要尝试把调整安装的逻辑放至api，以减少用户的自行设置流程
+     */
     private void init(final Context context, final String versionCode,final String versionName,String packageName,String sign) {
         Web.loadConfig(WebUrl.CONFIG_URL, packageName, sign, new WebListener() {
             @Override

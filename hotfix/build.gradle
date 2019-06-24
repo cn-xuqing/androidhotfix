@@ -1,11 +1,12 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.cn-xuqing'
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 27
-        targetSdkVersion 27
+        minSdkVersion 8
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
