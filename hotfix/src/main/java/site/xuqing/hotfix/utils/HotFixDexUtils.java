@@ -4,6 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -44,6 +47,50 @@ public class HotFixDexUtils {
         Log.i("HotFixManager", "loadedDexList.size: " + loadedDex.size());
         //新的已修复的dex，与之前手机系统中的dex进行合并
         doDexInject(context, fileDir);
+    }
+
+    public static void fixBug(Context context) {
+        // 对应目录 /data/data/packageName/mydex/classes2.dex
+        File fileDir = context.getDir(HotFixDexUtils.DEX_DIR, Context.MODE_PRIVATE);
+        String filePath = fileDir.getAbsolutePath() + File.separator + HotFixFileUtils.getHotfixFixFileName();
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+        InputStream inputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            //下载已修复的dex，保存在 SD卡路径根目录下的 /01Sinya/classes2.dex
+            String downDexFilePath = HotFixFileUtils.getHotfixFixPath()  + HotFixFileUtils.getHotfixFixFileName();
+            inputStream = new FileInputStream(downDexFilePath);
+            fileOutputStream = new FileOutputStream(filePath);
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = inputStream.read(buf)) != -1) {
+                fileOutputStream.write(buf, 0, len);
+            }
+            File newFile = new File(filePath);
+            Log.i("HotFixManager",filePath);
+            if (newFile.exists()) {
+                Log.i("HotFixManager","dex 迁移成功");
+            }
+            //热修复
+            HotFixDexUtils.loadFixedDex(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.i("HotFixManager", e.toString());
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            } catch (Exception e2) {
+                Log.i("HotFixManager", e2.toString());
+            }
+        }
     }
 
     private static void doDexInject(Context context, File fileDir) {

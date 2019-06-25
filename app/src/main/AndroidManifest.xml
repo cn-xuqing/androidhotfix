@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xuqing.hotfix">
 
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -11,6 +12,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -21,7 +23,7 @@
         </activity>
         <meta-data
             android:name="site.xuqing.hotfix.META_DATA_KEY"
-            android:value="填写你APP的sign值" />
+            android:value="123aa" />
     </application>
 
 </manifest>

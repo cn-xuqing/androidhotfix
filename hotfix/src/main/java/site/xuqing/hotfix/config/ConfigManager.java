@@ -21,6 +21,9 @@ public class ConfigManager {
     }
 
     public static ConfigManager getInstance() {
+        initConfig(ConfigVersionType.OLD);
+        initConfig(ConfigVersionType.CURRENT);
+        initConfig(ConfigVersionType.TEMP);
         return configManager;
     }
 
@@ -53,8 +56,6 @@ public class ConfigManager {
     }
 
     public boolean isUpgrade() {
-        initConfig(ConfigVersionType.OLD);
-        initConfig(ConfigVersionType.CURRENT);
         String oldVersion = configBeanOld.getUpgradeVersion();
         String currentVersion = configBeanCurrent.getUpgradeVersion();
         if (currentVersion != null && oldVersion != null) {
