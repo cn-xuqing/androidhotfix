@@ -14,7 +14,7 @@ import java.util.HashSet;
 import dalvik.system.DexClassLoader;
 import dalvik.system.PathClassLoader;
 
-public class HotFixDexUtils {
+public final class HotFixDexUtils {
     /**
      * app应用程序根目录下的mydex文件夹，下载好的dex修复文件 会被通过io流 拷贝到这里
      */

@@ -1,7 +1,5 @@
 package site.xuqing.hotfix.net;
 
-import android.os.Looper;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,7 +17,7 @@ import site.xuqing.hotfix.utils.HotFixFileUtils;
 /**
  * @hide
  */
-public class Web {
+public final class Web {
     public static void loadConfig(String configUrl, String appPackage, String sign, WebListener webListener) {
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("appPackage", appPackage);
@@ -158,7 +156,7 @@ public class Web {
      * @param fileIn 拷贝和重命名的文件
      * @param fileOut 目标文件
      */
-    private static void copyRenameFile(File fileIn,File fileOut){
+    public static void copyRenameFile(File fileIn,File fileOut){
         FileInputStream inCopy=null;
         FileOutputStream outCopy=null;
         try{

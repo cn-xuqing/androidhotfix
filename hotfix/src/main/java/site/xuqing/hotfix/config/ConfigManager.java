@@ -3,18 +3,24 @@ package site.xuqing.hotfix.config;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import site.xuqing.hotfix.bean.ConfigBean;
+import site.xuqing.hotfix.bean.DelayBean;
 import site.xuqing.hotfix.utils.HotFixFileUtils;
 
-public class ConfigManager {
+public final class ConfigManager {
     private static ConfigBean configBeanOld = new ConfigBean();
     private static ConfigBean configBeanCurrent = new ConfigBean();
     private static ConfigBean configBeanTemp = new ConfigBean();
+    private static DelayBean delayBean=new DelayBean();
     private static ConfigManager configManager = new ConfigManager();
 
     private ConfigManager() {
@@ -53,6 +59,24 @@ public class ConfigManager {
 
     public String getUpgradeUrl() {
         return configBeanCurrent.getUpgradeUrl();
+    }
+
+    public boolean getUpgradeDelay(){
+        readDelayFile();
+        return delayBean.isUpgradeDelay();
+    }
+    public void setUpgradeDelay(boolean upgradeDelay){
+        delayBean.setUpgradeDelay(upgradeDelay);
+        writeDelayFile();
+    }
+
+    public boolean getHotfixDelay(){
+        readDelayFile();
+        return delayBean.isHotfixDelay();
+    }
+    public void setHotfixDelay(boolean hotfixDelay){
+        delayBean.setHotfixDelay(hotfixDelay);
+        writeDelayFile();
     }
 
     public boolean isUpgrade() {
@@ -190,6 +214,77 @@ public class ConfigManager {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void writeDelayFile(){
+        BufferedWriter bufferedWriter=null;
+        OutputStream outputStream=null;
+        try {
+            File file=new File(HotFixFileUtils.getHotfixBasePath(),HotFixFileUtils.getHotfixDelayFileName());
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("upgradeDelay",delayBean.isUpgradeDelay());
+            jsonObject.put("hotfixDelay",delayBean.isHotfixDelay());
+            outputStream=new FileOutputStream(file);
+            bufferedWriter=new BufferedWriter(new OutputStreamWriter(outputStream));
+            bufferedWriter.write(jsonObject.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void readDelayFile(){
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            File file=new File(HotFixFileUtils.getHotfixBasePath()+HotFixFileUtils.getHotfixDelayFileName());
+            if (file.exists()){
+                inputStream = new FileInputStream(file);
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+                String jsonStr = stringBuilder.toString();
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                delayBean.setUpgradeDelay(jsonObject.getBoolean("upgradeDelay"));
+                delayBean.setHotfixDelay(jsonObject.getBoolean("hotfixDelay"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();

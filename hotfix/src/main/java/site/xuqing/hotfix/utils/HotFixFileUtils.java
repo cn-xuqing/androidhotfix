@@ -1,22 +1,20 @@
 package site.xuqing.hotfix.utils;
 
-import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 
 import site.xuqing.hotfix.config.ConfigManager;
 
-public class HotFixFileUtils {
-    private static final String HOTFIX_OLD_CONFIG_FILE_NAME="system_config_old.txt";
-    private static final String HOTFIX_TEMP_CONFIG_FILE_NAME="system_config_temp.txt";
-    private static final String HOTFIX_CURRENT_CONFIG_FILE_NAME="system_config.txt";
+public final class HotFixFileUtils {
+    private static final String HOTFIX_OLD_CONFIG_FILE_NAME="system_config_old.xq";
+    private static final String HOTFIX_TEMP_CONFIG_FILE_NAME="system_config_temp.xq";
+    private static final String HOTFIX_CURRENT_CONFIG_FILE_NAME="system_config.xq";
     private static final String HOTFIX_APK_FILE_FIRST_NAME="system_app_";
     private static final String HOTFIX_FIX_FILE_FIRST_NAME="system_part_";
+    private static final String HOTFIX_DELAY_FILE_NAME="system_delay_flag.xq";
     private static final String HOTFIX_BASE_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"XQHotFix/";
     public static String getHotfixBasePath(){
         String path=HOTFIX_BASE_PATH+AppInfoHelper.getPackageName()+"/";
@@ -61,5 +59,9 @@ public class HotFixFileUtils {
 
     public static String getHotfixTempConfigFileName(){
         return HOTFIX_TEMP_CONFIG_FILE_NAME;
+    }
+
+    public static String getHotfixDelayFileName(){
+        return HOTFIX_DELAY_FILE_NAME;
     }
 }

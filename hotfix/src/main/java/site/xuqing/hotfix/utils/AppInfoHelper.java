@@ -1,6 +1,5 @@
 package site.xuqing.hotfix.utils;
 
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -8,7 +7,7 @@ import android.util.Log;
 
 import site.xuqing.hotfix.Hotfix;
 
-public class AppInfoHelper {
+public final class AppInfoHelper {
     private static final String META_DATA_KEY="site.xuqing.hotfix.META_DATA_KEY";
     /**
      * 返回当前程序版本号

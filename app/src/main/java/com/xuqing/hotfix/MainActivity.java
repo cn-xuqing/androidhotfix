@@ -11,6 +11,8 @@ import com.yanzhenjie.permission.Permission;
 import java.util.List;
 
 import site.xuqing.hotfix.Hotfix;
+import site.xuqing.hotfix.bean.SettingConfig;
+import site.xuqing.hotfix.net.Web;
 
 public class MainActivity extends Activity {
     @Override
@@ -39,7 +41,12 @@ public class MainActivity extends Activity {
         });
 
         requestPermission();
-        Hotfix.registerFix(this);
+        SettingConfig settingConfig=new SettingConfig();
+        settingConfig.setShowDownLoadHotfixMessage(true);
+        settingConfig.setShowDownLoadUpgradeMessage(true);
+        settingConfig.setShowFixCompleteMessage(true);
+        settingConfig.setShowInstallApkMessage(true);
+        Hotfix.registerFix(this,settingConfig);
     }
 
     private void requestPermission() {
@@ -58,5 +65,11 @@ public class MainActivity extends Activity {
             }
         })
                 .start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Hotfix.unregisterFix();
     }
 }

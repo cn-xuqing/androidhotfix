@@ -1,6 +1,6 @@
 package site.xuqing.hotfix.bean;
 
-public class ConfigBean {
+public final class ConfigBean {
     private String hotfixVersion;
     private String hotfixUrl;
     private String upgradeVersion;
