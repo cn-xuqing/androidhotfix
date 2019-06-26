@@ -1,4 +1,5 @@
 # AndroidHotfix
+### 项目网站：[hotfix.51bugs.com](http://hotfix.51bugs.com)
 ## 一、项目介绍
 本项目旨在为了方便Android开发者快速的接入热更新已及apk升级功能。
 - 支持apk下载提示安装升级。
@@ -19,7 +20,7 @@ dependencies {
         android:value="填写你APP的sign值" />
 </application>
 ```
-- [sign值获取](http://hotfix.51bugs.com/index.html)
+- [sign值获取](http://hotfix.51bugs.com)
 - 加入相关权限
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
