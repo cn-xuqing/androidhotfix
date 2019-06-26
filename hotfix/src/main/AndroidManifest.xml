@@ -5,12 +5,15 @@
     <application>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="site.xuqing.hotfix.fileProvider"
+            android:authorities="${providerId}.site.xuqing.hotfix.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <meta-data
+            android:name="site.xuqing.hotfix.META_DATA_PROVIDER_KEY"
+            android:value="${providerId}"/>
     </application>
 </manifest>

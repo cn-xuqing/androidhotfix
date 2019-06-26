@@ -8,7 +8,8 @@ import android.util.Log;
 import site.xuqing.hotfix.Hotfix;
 
 public final class AppInfoHelper {
-    private static final String META_DATA_KEY="site.xuqing.hotfix.META_DATA_KEY";
+    public static final String META_DATA_SIGN_KEY="site.xuqing.hotfix.META_DATA_KEY";
+    public static final String META_DATA_PROVIDER_KEY="site.xuqing.hotfix.META_DATA_PROVIDER_KEY";
     /**
      * 返回当前程序版本号
      */
@@ -58,12 +59,12 @@ public final class AppInfoHelper {
     /**
      * 返回当前应用的application中设置的meta-data值，即sign值
      */
-    public static String getAppMetaData(){
+    public static String getAppMetaData(String key){
         String sign=null;
         try {
             ApplicationInfo appInfo = Hotfix.getApplicationContext().getPackageManager()
                     .getApplicationInfo(Hotfix.getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
-            sign = appInfo.metaData.getString(META_DATA_KEY);
+            sign = appInfo.metaData.getString(key);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("MetaData", "Exception", e);
         }

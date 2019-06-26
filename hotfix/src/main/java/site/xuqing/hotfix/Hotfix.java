@@ -71,7 +71,7 @@ public final class Hotfix {
         final String versionCode = AppInfoHelper.getAppVersionCode();
         final String versionName = AppInfoHelper.getAppVersionName();
         final String packageName = AppInfoHelper.getPackageName();
-        final String sign = AppInfoHelper.getAppMetaData();
+        final String sign = AppInfoHelper.getAppMetaData(AppInfoHelper.META_DATA_SIGN_KEY);
         Web.loadConfig(WebUrl.CONFIG_URL, packageName, sign, new WebListener() {
             @Override
             public void onWebSuccess(String data) {
@@ -193,7 +193,7 @@ public final class Hotfix {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //24
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Uri contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", apkFile);
+            Uri contentUri = FileProvider.getUriForFile(context, AppInfoHelper.getAppMetaData(AppInfoHelper.META_DATA_PROVIDER_KEY)+"."+BuildConfig.APPLICATION_ID + ".fileProvider", apkFile);
             intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
             //兼容8.0，26
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

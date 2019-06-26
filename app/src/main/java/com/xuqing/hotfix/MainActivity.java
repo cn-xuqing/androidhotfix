@@ -12,7 +12,6 @@ import java.util.List;
 
 import site.xuqing.hotfix.Hotfix;
 import site.xuqing.hotfix.bean.SettingConfig;
-import site.xuqing.hotfix.net.Web;
 
 public class MainActivity extends Activity {
     @Override
@@ -42,9 +41,21 @@ public class MainActivity extends Activity {
 
         requestPermission();
         SettingConfig settingConfig=new SettingConfig();
+        /**
+         * 是否显示下载热更新提示
+         */
         settingConfig.setShowDownLoadHotfixMessage(true);
+        /**
+         * 是否显示下载安装包提示
+         */
         settingConfig.setShowDownLoadUpgradeMessage(true);
+        /**
+         * 是否显示修复完成相关提示
+         */
         settingConfig.setShowFixCompleteMessage(true);
+        /**
+         * 是否显示安装确认提示
+         */
         settingConfig.setShowInstallApkMessage(true);
         Hotfix.registerFix(this,settingConfig);
     }
