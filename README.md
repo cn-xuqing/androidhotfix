@@ -6,6 +6,12 @@
 - 支持热更新快速修复bug。
 ## 二、快速使用
 ### 1.APP配置
+- 项目配置，在project下的build.gradle文件中添加：
+```groovy
+repositories {
+   maven { url 'https://jitpack.io' }
+}
+```
 - 项目依赖：
 ```groovy
 dependencies {
