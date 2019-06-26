@@ -28,6 +28,7 @@ import site.xuqing.hotfix.utils.HotFixFileUtils;
 
 /**
  * @author xuqing
+ * TODO 目前需要再AndroidManifest.xml加入这句android:usesCleartextTraffic="true"才能用，是因为okhttp3设置了明文链接导致，需要修复
  */
 public final class Hotfix {
     private static Context applicationContext;
