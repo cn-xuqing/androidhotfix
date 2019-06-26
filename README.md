@@ -6,6 +6,12 @@
 - 支持热更新快速修复bug。
 ## 二、快速使用
 ### 1.APP配置
+- 项目配置，在project下的build.gradle文件中添加：
+```groovy
+repositories {
+   maven { url 'https://jitpack.io' }
+}
+```
 - 项目依赖：
 ```groovy
 dependencies {
@@ -96,7 +102,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Hotfix.unregisterFix();
+        Hotfix.unregisterFix(); 
     }
 }
 ```
@@ -114,5 +120,5 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
+limitations under the License. 
 ```
