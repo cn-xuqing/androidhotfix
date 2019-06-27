@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 
 import site.xuqing.hotfix.bean.ConfigBean;
 import site.xuqing.hotfix.bean.DelayBean;
+import site.xuqing.hotfix.bean.LengthBean;
 import site.xuqing.hotfix.utils.HotFixFileUtils;
 
 public final class ConfigManager {
@@ -21,6 +22,8 @@ public final class ConfigManager {
     private static ConfigBean configBeanCurrent = new ConfigBean();
     private static ConfigBean configBeanTemp = new ConfigBean();
     private static DelayBean delayBean=new DelayBean();
+    private static LengthBean lengthBean=new LengthBean();
+
     private static ConfigManager configManager = new ConfigManager();
 
     private ConfigManager() {
@@ -77,6 +80,23 @@ public final class ConfigManager {
     public void setHotfixDelay(boolean hotfixDelay){
         delayBean.setHotfixDelay(hotfixDelay);
         writeDelayFile();
+    }
+
+    public long getHotfixLength(){
+        readLengthFile();
+        return lengthBean.getHotfixLength();
+    }
+    public void setHotfixLength(long length){
+        lengthBean.setHotfixLength(length);
+        writeLengthFile();
+    }
+    public long getUpgradeLength(){
+        readLengthFile();
+        return lengthBean.getUpgradeLength();
+    }
+    public void setUpgradeLength(long length){
+        lengthBean.setUpgradeLength(length);
+        writeLengthFile();
     }
 
     public boolean isUpgrade() {
@@ -182,33 +202,47 @@ public final class ConfigManager {
                 }
                 String jsonStr = stringBuilder.toString();
                 JSONObject jsonObject = new JSONObject(jsonStr);
-                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
-                JSONObject jsonObjectHotfix = jsonObjectData.getJSONObject("hotfix");
-                JSONObject jsonObjectUpgrade = jsonObjectData.getJSONObject("upgrade");
-                switch (type) {
-                    case OLD:
-                        configBeanOld.setHotfixVersion(jsonObjectHotfix.getString("version"));
-                        configBeanOld.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
-                        configBeanOld.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
-                        configBeanOld.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
-                        configBeanOld.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
-                        break;
-                    case CURRENT:
-                        configBeanCurrent.setHotfixVersion(jsonObjectHotfix.getString("version"));
-                        configBeanCurrent.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
-                        configBeanCurrent.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
-                        configBeanCurrent.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
-                        configBeanCurrent.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
-                        break;
-                    case TEMP:
-                        configBeanTemp.setHotfixVersion(jsonObjectHotfix.getString("version"));
-                        configBeanTemp.setHotfixUrl(jsonObjectHotfix.getString("fixUrl"));
-                        configBeanTemp.setUpgradeVersion(jsonObjectUpgrade.getString("version"));
-                        configBeanTemp.setUpgradeVersionCode(jsonObjectUpgrade.getString("versionCode"));
-                        configBeanTemp.setUpgradeUrl(jsonObjectUpgrade.getString("apkUrl"));
-                        break;
-                    default:
-                        break;
+                JSONObject jsonObjectData = jsonObject.optJSONObject("data");
+                if (jsonObjectData!=null) {
+                    JSONObject jsonObjectHotfix = jsonObjectData.optJSONObject("hotfix");
+                    JSONObject jsonObjectUpgrade = jsonObjectData.optJSONObject("upgrade");
+                    switch (type) {
+                        case OLD:
+                            if (jsonObjectHotfix!=null) {
+                                configBeanOld.setHotfixVersion(jsonObjectHotfix.optString("version"));
+                                configBeanOld.setHotfixUrl(jsonObjectHotfix.optString("fixUrl"));
+                            }
+                            if (jsonObjectUpgrade!=null) {
+                                configBeanOld.setUpgradeVersion(jsonObjectUpgrade.optString("version"));
+                                configBeanOld.setUpgradeVersionCode(jsonObjectUpgrade.optString("versionCode"));
+                                configBeanOld.setUpgradeUrl(jsonObjectUpgrade.optString("apkUrl"));
+                            }
+                            break;
+                        case CURRENT:
+                            if (jsonObjectHotfix!=null) {
+                                configBeanCurrent.setHotfixVersion(jsonObjectHotfix.optString("version"));
+                                configBeanCurrent.setHotfixUrl(jsonObjectHotfix.optString("fixUrl"));
+                            }
+                            if (jsonObjectUpgrade!=null) {
+                                configBeanCurrent.setUpgradeVersion(jsonObjectUpgrade.optString("version"));
+                                configBeanCurrent.setUpgradeVersionCode(jsonObjectUpgrade.optString("versionCode"));
+                                configBeanCurrent.setUpgradeUrl(jsonObjectUpgrade.optString("apkUrl"));
+                            }
+                            break;
+                        case TEMP:
+                            if (jsonObjectHotfix!=null) {
+                                configBeanTemp.setHotfixVersion(jsonObjectHotfix.optString("version"));
+                                configBeanTemp.setHotfixUrl(jsonObjectHotfix.optString("fixUrl"));
+                            }
+                            if (jsonObjectUpgrade!=null) {
+                                configBeanTemp.setUpgradeVersion(jsonObjectUpgrade.optString("version"));
+                                configBeanTemp.setUpgradeVersionCode(jsonObjectUpgrade.optString("versionCode"));
+                                configBeanTemp.setUpgradeUrl(jsonObjectUpgrade.optString("apkUrl"));
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -281,6 +315,77 @@ public final class ConfigManager {
                 JSONObject jsonObject = new JSONObject(jsonStr);
                 delayBean.setUpgradeDelay(jsonObject.getBoolean("upgradeDelay"));
                 delayBean.setHotfixDelay(jsonObject.getBoolean("hotfixDelay"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void writeLengthFile(){
+        BufferedWriter bufferedWriter=null;
+        OutputStream outputStream=null;
+        try {
+            File file=new File(HotFixFileUtils.getHotfixBasePath(),HotFixFileUtils.getHotfixLengthFileName());
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("upgradeLength",lengthBean.getUpgradeLength());
+            jsonObject.put("hotfixLength",lengthBean.getHotfixLength());
+            outputStream=new FileOutputStream(file);
+            bufferedWriter=new BufferedWriter(new OutputStreamWriter(outputStream));
+            bufferedWriter.write(jsonObject.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void readLengthFile(){
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            File file=new File(HotFixFileUtils.getHotfixBasePath()+HotFixFileUtils.getHotfixLengthFileName());
+            if (file.exists()){
+                inputStream = new FileInputStream(file);
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+                String jsonStr = stringBuilder.toString();
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                lengthBean.setUpgradeLength(jsonObject.getLong("upgradeLength"));
+                lengthBean.setHotfixLength(jsonObject.getLong("hotfixLength"));
             }
         }catch (Exception e){
             e.printStackTrace();

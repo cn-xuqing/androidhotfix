@@ -28,7 +28,6 @@ import site.xuqing.hotfix.utils.HotFixFileUtils;
 
 /**
  * @author xuqing
- * TODO 目前需要再AndroidManifest.xml加入这句android:usesCleartextTraffic="true"才能用，是因为okhttp3设置了明文链接导致，需要修复
  */
 public final class Hotfix {
     private static Context applicationContext;
@@ -84,37 +83,37 @@ public final class Hotfix {
                     currentVersionCode = Integer.parseInt(versionCode);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    //如果数据解析报错，证明保存的config文件出错，则不再进行下一步
+                    return;
                 }
+                //如果apk下载被延迟，或者是可以升级，则跳转对话框下载或者直接下载
                 if (ConfigManager.getInstance().getUpgradeDelay() || ConfigManager.getInstance().isUpgrade()) {
-                    if (settingConfig != null && settingConfig.isShowDownLoadUpgradeMessage()) {
-                        Message msg = new Message();
-                        msg.what = 2;
-                        msg.obj = FixType.apk;
-                        mHandler.sendMessage(msg);
-                    } else {
-                        downloadApk();
-                    }
+                    downloadApkShowDialog();
+                //如果版本号大于当前版本号，且版本名不想等
                 } else if (currentVersionCode < webVersionCode && !versionName.equals(ConfigManager.getInstance().getUpgradeVersion())) {
                     String apkUrl = HotFixFileUtils.getHotfixApkPath() + HotFixFileUtils.getHotfixApkFileName();
-                    if (settingConfig != null && settingConfig.isShowInstallApkMessage()) {
-                        Message msg = new Message();
-                        msg.what = 0;
-                        msg.obj = apkUrl;
-                        mHandler.sendMessage(msg);
-                    } else {
-                        final Activity mActivity = mActivityReference.get();
-                        if (mActivity != null) {
-                            installApk(mActivity, apkUrl);
-                        }
+                    File apkFile=new File(apkUrl);
+                    System.out.println("本地apk文件大小："+apkFile.length());
+                    //首先判断apk是否已被下载，不存在先去下载，如果文件存在，但是大小和网络大小不符，则去下载
+                    if (!apkFile.exists()
+                            ||(int)apkFile.length()==0
+                            ||(ConfigManager.getInstance().getUpgradeLength()!=0&&apkFile.length()!=ConfigManager.getInstance().getUpgradeLength())){
+                        downloadApkShowDialog();
+                    }else {
+                        //如果apk已被下载，则提示安装或者直接安装
+                        installApkShowDialog(apkUrl);
                     }
+                    //如果热更新下载被延迟，或者可以进行热更新，则提示下载热更新文件或者直接下载热更新文件，校验文件的大小
                 } else if (ConfigManager.getInstance().getHotfixDelay() || ConfigManager.getInstance().isHotfix()) {
-                    if (settingConfig != null && settingConfig.isShowDownLoadHotfixMessage()) {
-                        Message msg = new Message();
-                        msg.what = 2;
-                        msg.obj = FixType.fix;
-                        mHandler.sendMessage(msg);
-                    } else {
-                        downloadFix();
+                    String fixUrl=HotFixFileUtils.getHotfixFixPath()+HotFixFileUtils.getHotfixFixFileName();
+                    File fixFile=new File(fixUrl);
+                    System.out.println("本地fix文件大小："+fixFile.length());
+                    if (!fixFile.exists()
+                            ||(int)fixFile.length()==0
+                            ||(ConfigManager.getInstance().getHotfixLength()!=0&&fixFile.length()!=ConfigManager.getInstance().getHotfixLength())) {
+                        downloadHotfixShowDialog();
+                    }else{
+                        installFix(fixUrl);
                     }
                 }
             }
@@ -152,6 +151,42 @@ public final class Hotfix {
                     default:
                         break;
                 }
+            }
+        }
+    }
+
+    private static void downloadHotfixShowDialog(){
+        if (settingConfig != null && settingConfig.isShowDownLoadHotfixMessage()) {
+            Message msg = new Message();
+            msg.what = 2;
+            msg.obj = FixType.fix;
+            mHandler.sendMessage(msg);
+        } else {
+            downloadFix();
+        }
+    }
+
+    private static void downloadApkShowDialog(){
+        if (settingConfig != null && settingConfig.isShowDownLoadUpgradeMessage()) {
+            Message msg = new Message();
+            msg.what = 2;
+            msg.obj = FixType.apk;
+            mHandler.sendMessage(msg);
+        } else {
+            downloadApk();
+        }
+    }
+
+    private static void installApkShowDialog(String data){
+        if (settingConfig != null && settingConfig.isShowInstallApkMessage()) {
+            Message msg = new Message();
+            msg.what = 0;
+            msg.obj = data;
+            mHandler.sendMessage(msg);
+        } else {
+            final Activity mActivity = mActivityReference.get();
+            if (mActivity != null) {
+                installApk(mActivity, data);
             }
         }
     }
@@ -214,6 +249,16 @@ public final class Hotfix {
         }
     }
 
+    private static void installFix(String data){
+        HotFixDexUtils.fixBug(applicationContext);
+        if (settingConfig != null && settingConfig.isShowFixCompleteMessage()) {
+            Message msg = new Message();
+            msg.what = 0;
+            msg.obj = data;
+            mHandler.sendMessage(msg);
+        }
+    }
+
     private static void showMessageDialog(final FixType type) {
         final Activity mActivity = mActivityReference.get();
         if (mActivity != null) {
@@ -231,6 +276,7 @@ public final class Hotfix {
             new AlertDialog.Builder(mActivity)
                     .setTitle("更新提示")
                     .setMessage(message)
+                    .setCancelable(false)
                     .setNeutralButton("马上下载", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -275,13 +321,7 @@ public final class Hotfix {
             @Override
             public void onWebSuccess(String data) {
                 System.out.println("hotfix下载成功：" + data);
-                HotFixDexUtils.fixBug(applicationContext);
-                if (settingConfig != null && settingConfig.isShowFixCompleteMessage()) {
-                    Message msg = new Message();
-                    msg.what = 0;
-                    msg.obj = data;
-                    mHandler.sendMessage(msg);
-                }
+                installFix(data);
             }
 
             @Override
@@ -295,17 +335,7 @@ public final class Hotfix {
             @Override
             public void onWebSuccess(final String data) {
                 System.out.println(data);
-                if (settingConfig != null && settingConfig.isShowInstallApkMessage()) {
-                    Message msg = new Message();
-                    msg.what = 0;
-                    msg.obj = data;
-                    mHandler.sendMessage(msg);
-                } else {
-                    final Activity mActivity = mActivityReference.get();
-                    if (mActivity != null) {
-                        installApk(mActivity, data);
-                    }
-                }
+                installApkShowDialog(data);
             }
 
             @Override

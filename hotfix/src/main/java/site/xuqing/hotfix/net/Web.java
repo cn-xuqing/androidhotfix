@@ -80,8 +80,6 @@ public final class Web {
                 try {
                     //获取输入流
                     is = response.body().byteStream();
-                    //获取文件大小
-                    long total = response.body().contentLength();
                     if (is != null) {
                         // 设置路径,apk
                         File file = null;
@@ -107,18 +105,30 @@ public final class Web {
                             process += ch;
                             //这里可以添加更新进度
                         }
-                        if (type==HotFixType.config) {
-                            //这里做文件拷贝
-                            if (!ConfigManager.getInstance().compareOldAndCurrentConfig()) {
-                                File fileCurrent = new File(HotFixFileUtils.getHotfixBasePath() + HotFixFileUtils.getHotfixCurrentConfigFileName());
-                                File fileOld = new File(HotFixFileUtils.getHotfixBasePath(), HotFixFileUtils.getHotfixOldConfigFileName());
-                                copyRenameFile(fileCurrent, fileOld);
-                            }
-                            if (!ConfigManager.getInstance().compareTempAndCurrentConfig()) {
-                                File fileTemp = new File(HotFixFileUtils.getHotfixBasePath() + HotFixFileUtils.getHotfixTempConfigFileName());
-                                File fileCurrent = new File(HotFixFileUtils.getHotfixBasePath(), HotFixFileUtils.getHotfixCurrentConfigFileName());
-                                copyRenameFile(fileTemp, fileCurrent);
-                            }
+                        switch (type) {
+                            case apk:
+                                System.out.println("网络apk文件大小："+process);
+                                ConfigManager.getInstance().setUpgradeLength(process);
+                                break;
+                            case fix:
+                                System.out.println("网络fix文件大小："+process);
+                                ConfigManager.getInstance().setHotfixLength(process);
+                                break;
+                            case config:
+                                //这里做文件拷贝
+                                if (!ConfigManager.getInstance().compareOldAndCurrentConfig()) {
+                                    File fileCurrent = new File(HotFixFileUtils.getHotfixBasePath() + HotFixFileUtils.getHotfixCurrentConfigFileName());
+                                    File fileOld = new File(HotFixFileUtils.getHotfixBasePath(), HotFixFileUtils.getHotfixOldConfigFileName());
+                                    copyRenameFile(fileCurrent, fileOld);
+                                }
+                                if (!ConfigManager.getInstance().compareTempAndCurrentConfig()) {
+                                    File fileTemp = new File(HotFixFileUtils.getHotfixBasePath() + HotFixFileUtils.getHotfixTempConfigFileName());
+                                    File fileCurrent = new File(HotFixFileUtils.getHotfixBasePath(), HotFixFileUtils.getHotfixCurrentConfigFileName());
+                                    copyRenameFile(fileTemp, fileCurrent);
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         webListener.onWebSuccess(file.getAbsolutePath());
                     }
