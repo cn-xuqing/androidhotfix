@@ -15,7 +15,7 @@ repositories {
 - 项目依赖：
 ```groovy
 dependencies {
-   implementation 'com.github.cn-xuqing:androidhotfix:2.1.0'
+   implementation 'com.github.cn-xuqing:androidhotfix:2.2.0'
 }
 ```
 - APP的AndroidManifest.xml中配置：
