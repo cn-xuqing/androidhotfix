@@ -84,7 +84,8 @@ public final class Hotfix {
                 } catch (Exception e) {
                     e.printStackTrace();
                     //如果数据解析报错，证明保存的config文件出错，则不再进行下一步
-                    return;
+                    //此处会产生bug，当没有apk信息时会报错，导致hotfix包无法下载
+                    //return;
                 }
                 //如果apk下载被延迟，或者是可以升级，则跳转对话框下载或者直接下载
                 if (ConfigManager.getInstance().getUpgradeDelay() || ConfigManager.getInstance().isUpgrade()) {
